@@ -1,13 +1,14 @@
 // 회원가입 페이지
 import React, { useState } from 'react';
 import { Paper } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
 const Signup = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isValidEmail, setIsValidEmail] = useState(false)
     const [isValidPassword, setIsValidPassword] = useState(false)
-
+    const navigate = useNavigate();
 
     const checkEmail = (email) => {
         if (email.includes('@')){
@@ -41,6 +42,10 @@ const Signup = () => {
         console.log('changed')
     }
 
+    const handleSignup = (e) => {
+        navigate('/signin')
+    }
+
     return (
         <>
             <Paper>
@@ -53,7 +58,10 @@ const Signup = () => {
                     <span>비밀번호를 입력해 주세요</span>
                     <input data-testid="password-input" onChange = {handlePasswordChange}/>
                 </div>
-                <button data-testid="signup-button" disabled ={!(isValidPassword & isValidEmail)}>회원가입</button>
+                <button data-testid="signup-button" 
+                        disabled ={!(isValidPassword & isValidEmail)}
+                        onClick = {handleSignup}     
+                        >회원가입</button>
             </Paper>        
         </>
     )
