@@ -1,9 +1,13 @@
 // 로그인 페이지
-import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
+
 
 const Signin = () => {
+    return (
     <>
-    로그인
+        <div>
+        로그인하기
+        </div>    
     </>
+)
 }
 export default Signin
