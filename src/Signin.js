@@ -1,4 +1,4 @@
-// 회원가입 페이지
+// 로그인 페이지
 import React, { useState } from 'react';
 import { Paper } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
