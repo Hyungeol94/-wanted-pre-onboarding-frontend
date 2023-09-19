@@ -42,8 +42,33 @@ const SignUp = () => {
         console.log('changed')
     }
 
-    const handleSignup = (e) => {
-        navigate('/signin')
+    const handleSignUp = async () => {
+        try {
+            //회원가입 API 호출 및 응답 받기
+            const response = await fetch('https://www.pre-onboarding-selection-task.shop/auth/signup', {
+              method: 'POST',
+              headers: {
+                'Content-Type' : 'application/json'
+            },
+              body: JSON.stringify({
+                email : email,
+                password : password,
+              })
+            });
+      
+            if (response.ok) {
+              // 회원가입이 성공한 경우
+              console.log('회원가입 성공')
+              navigate('/signin')
+            } else {
+              // 회원가입이 실패한 경우
+              console.error('회원가입 실패');
+              const responseBody = await response.text();
+              console.error('Response Body:', responseBody);
+            }
+          } catch (error) {
+            console.error('오류 발생:', error);
+          } 
     }
 
     return (
@@ -60,7 +85,7 @@ const SignUp = () => {
                 </div>
                 <button data-testid="signup-button" 
                         disabled ={!(isValidPassword & isValidEmail)}
-                        onClick = {handleSignup}     
+                        onClick = {handleSignUp}     
                         >회원가입</button>
             </Paper>        
         </>
