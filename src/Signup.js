@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Paper } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
-const Signup = () => {
+const SignUp = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isValidEmail, setIsValidEmail] = useState(false)
@@ -67,4 +67,4 @@ const Signup = () => {
     )
 }
 
-export default Signup
+export default SignUp
