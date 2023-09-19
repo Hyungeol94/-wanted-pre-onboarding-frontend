@@ -59,7 +59,8 @@ const SignIn = () => {
             // 로그인이 성공한 경우
             const data = await response.json();
             // JWT를 로컬 스토리지에 저장
-            localStorage.setItem('jwt', data.body);
+            localStorage.setItem('jwt', data.access_token);
+            console.log(`token: ${data.access_token}`)
             // 로그인 성공 시
             navigate('/todo');
           } else {
