@@ -58,7 +58,7 @@ const Todo = () => {
         });
     }
       
-    const updateToDo = async (info) => {
+    const handleCheckBoxClick = async (info) => {
     console.log(info)
     const response = await fetch(`https://www.pre-onboarding-selection-task.shop/todos/${info.id}`, {
         method: 'PUT',
@@ -86,6 +86,28 @@ const Todo = () => {
 
     setToDoList(updatedToDoList);
     }
+
+
+    const deleteToDo = async (info) => {
+      const response = await fetch(`https://www.pre-onboarding-selection-task.shop/todos/${info.id}`, {
+          method: 'DELETE',
+          headers:  
+            {'Authorization': `Bearer ${token}`,
+            },
+      })
+  
+        if (!response.ok) {            
+          const responseBody = await response.text();
+          console.error('삭제 실패:', responseBody);
+          throw new Error(`실패 상태: ${response.status}`);            
+        }
+       
+        const updatedToDoList = toDoList.filter(todo => todo.id !== info.id);
+  
+      setToDoList(updatedToDoList);
+      }
+
+
     
     return (
         <>
@@ -95,9 +117,11 @@ const Todo = () => {
                 {toDoList.map((todo) => (
                 <li key={todo.id}>
                     <label>
-                        <input type="checkbox" checked= {todo.isCompleted} onClick={()=>updateToDo(todo)}/>
+                        <input type="checkbox" checked= {todo.isCompleted} onClick={()=>handleCheckBoxClick(todo)}/>
                         <span>{todo.todo}</span>
                     </label>
+                    <button data-testid="modify-button">수정</button>
+                    <button data-testid="delete-button" onClick = {() => deleteToDo(todo)}>삭제</button>
                 </li>
                 ))}
             </ul>
