@@ -1,15 +1,14 @@
 // 로그인 페이지
 import React, { useState } from 'react';
 import { Paper } from '@mui/material';
-import {useNavigate, Navigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const SignIn = (props) => {
+const SignIn = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isValidEmail, setIsValidEmail] = useState(false)
     const [isValidPassword, setIsValidPassword] = useState(false)
     const navigate = useNavigate();
-    const {isSignedIn, setIsSignedInd} = {...props}
 
     const checkEmail = (email) => {
         if (email.includes('@')){
@@ -63,10 +62,7 @@ const SignIn = (props) => {
             localStorage.setItem('jwt', data.access_token);
             console.log(`token: ${data.access_token}`)
             // 로그인 성공 시
-            console.log('Before navigate');
-            navigate('/todo', { replace: true });    
-            setIsSignedInd(true)        
-            console.log('After navigate');
+            navigate('/todo');
           } else {
             // 로그인이 실패한 경우
             console.error('로그인 실패');
@@ -81,8 +77,7 @@ const SignIn = (props) => {
 
     return (
         <>
-        {isSignedIn ? <Navigate replace to='/todo'/> : 
-        <Paper>
+            <Paper>
                 <div>로그인하기</div>
                 <div>
                     <span>이메일을 입력해 주세요</span>
@@ -94,10 +89,9 @@ const SignIn = (props) => {
                 </div>
                 <button data-testid="signin-button" 
                         disabled ={!(isValidPassword & isValidEmail)}
-                        onClick = {()=>handleSignIn()}     
+                        onClick = {handleSignIn}     
                         >로그인</button>
             </Paper>        
-        }    
         </>
     )
 }
