@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Paper } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
-const SignIn = () => {
+const SignIn = (props) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isValidEmail, setIsValidEmail] = useState(false)
     const [isValidPassword, setIsValidPassword] = useState(false)
     const navigate = useNavigate();
+    const {isLoggedIn, setIsLoggedIn} = {...props}
 
     const checkEmail = (email) => {
         if (email.includes('@')){
@@ -63,6 +64,7 @@ const SignIn = () => {
             console.log(`token: ${data.access_token}`)
             // 로그인 성공 시
             navigate('/todo');
+            setIsLoggedIn(true);
           } else {
             // 로그인이 실패한 경우
             console.error('로그인 실패');
