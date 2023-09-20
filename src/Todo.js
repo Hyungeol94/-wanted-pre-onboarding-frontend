@@ -33,9 +33,9 @@ const Todo = () => {
     }
 
     const getToDos = async () => {
-      console.log('getToDos called ')
+      //console.log('getToDos called ')
       // Make a GET request to the /todos endpoint
-      fetch('https://www.pre-onboarding-selection-task.shop/todos', {
+      const response = await fetch('https://www.pre-onboarding-selection-task.shop/todos', {
           method: 'GET',
           headers:  
             {'Authorization': `Bearer ${token}`},
@@ -58,20 +58,45 @@ const Todo = () => {
         });
     }
       
-    const updatTodo = () => {
+    const updateToDo = async (info) => {
+    console.log(info)
+    const response = await fetch(`https://www.pre-onboarding-selection-task.shop/todos/${info.id}`, {
+        method: 'PUT',
+        headers:  
+          {'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'},        
+        body:        
+          JSON.stringify({todo: info.todo,
+          isCompleted: !info.isCompleted
+          }),
+    })
 
+    
+      if (!response.ok) {            
+        const responseBody = await response.text();
+        console.error('수정 실패:', responseBody);
+        throw new Error(`실패 상태: ${response.status}`);            
+      }
+    
+      const newToDo = await response.json();
+      console.log('newToDo:', newToDo);      
+      const updatedToDoList = toDoList.map((item) =>
+      item.id === newToDo.id ? { ...item, isCompleted: !item.isCompleted } : item
+      );
+
+    setToDoList(updatedToDoList);
     }
-
+    
     return (
         <>
             <input data-testid="new-todo-input" ref = {inputRef}/>
             <button data-testid="new-todo-add-button" onClick = {createToDo}>추가</button>
             <ul>
-                {toDoList.map((info) => (
-                <li key={info.id}>
+                {toDoList.map((todo) => (
+                <li key={todo.id}>
                     <label>
-                        <input type="checkbox" />
-                        <span>{info.todo}</span>
+                        <input type="checkbox" checked= {todo.isCompleted} onClick={()=>updateToDo(todo)}/>
+                        <span>{todo.todo}</span>
                     </label>
                 </li>
                 ))}
