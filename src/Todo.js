@@ -3,7 +3,10 @@ import React, {useState, useRef, useEffect} from 'react'
 const Todo = () => {
     const [toDoList, setToDoList] = useState([])
     const inputRef = useRef('')
+    const [ModifyTargetToDoID, setModifyTargetToDoID] = useState('')
     const token = localStorage.getItem('jwt');
+    const toDoRef = useRef('')
+
     // Fetch and update the to-do list when the component mounts
     useEffect(() => {
       if (token) {
@@ -59,7 +62,6 @@ const Todo = () => {
     }
       
     const handleCheckBoxClick = async (info) => {
-    console.log(info)
     const response = await fetch(`https://www.pre-onboarding-selection-task.shop/todos/${info.id}`, {
         method: 'PUT',
         headers:  
@@ -83,8 +85,8 @@ const Todo = () => {
       const updatedToDoList = toDoList.map((item) =>
       item.id === newToDo.id ? { ...item, isCompleted: !item.isCompleted } : item
       );
-
-    setToDoList(updatedToDoList);
+      
+      setToDoList(updatedToDoList);
     }
 
 
@@ -107,24 +109,81 @@ const Todo = () => {
       setToDoList(updatedToDoList);
       }
 
+    const activateModifyToDo = (todo) => {
+      setModifyTargetToDoID(todo.id)
+    }
+
+    const deactivateModifyToDo = () => {
+      setModifyTargetToDoID('');
+    }
+
+    const modifyToDo = async (info) => {
+      const response = await fetch(`https://www.pre-onboarding-selection-task.shop/todos/${info.id}`, {
+        method: 'PUT',
+        headers:  
+          {'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'},        
+        body:        
+          JSON.stringify({todo: toDoRef.current.value,
+            isCompleted: info.isCompleted
+          }),
+    })
 
     
+      if (!response.ok) {            
+        const responseBody = await response.text();
+        console.error('수정 실패:', responseBody);
+        throw new Error(`실패 상태: ${response.status}`);            
+      }
+    
+      const newToDo = await response.json();
+      console.log('newToDo:', newToDo);      
+      const updatedToDoList = toDoList.map((item) =>
+      item.id === newToDo.id ? { ...item, todo: toDoRef.current.value } : item
+      );
+      
+    deactivateModifyToDo();
+    setToDoList(updatedToDoList);
+    }
+
+
     return (
         <>
             <input data-testid="new-todo-input" ref = {inputRef}/>
             <button data-testid="new-todo-add-button" onClick = {createToDo}>추가</button>
             <ul>
-                {toDoList.map((todo) => (
-                <li key={todo.id}>
-                    <label>
-                        <input type="checkbox" checked= {todo.isCompleted} onClick={()=>handleCheckBoxClick(todo)}/>
-                        <span>{todo.todo}</span>
-                    </label>
-                    <button data-testid="modify-button">수정</button>
-                    <button data-testid="delete-button" onClick = {() => deleteToDo(todo)}>삭제</button>
-                </li>
-                ))}
-            </ul>
+            {toDoList.map((todo) => (
+              <li key={todo.id}>
+                {todo.id === ModifyTargetToDoID ? (
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={todo.isCompleted}
+                      onClick={() => handleCheckBoxClick(todo)}
+                    />
+                    <input ref = {toDoRef} defaultValue={todo.todo} />
+                    <button onClick = {()=> modifyToDo(todo)}>제출</button>
+                    <button onClick = {()=> deactivateModifyToDo()} >취소</button>
+                  </label>
+                ) : (
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={todo.isCompleted}
+                      onClick={() => handleCheckBoxClick(todo)}
+                    />
+                    <span>{todo.todo}</span>
+                    <button data-testid="modify-button" onClick={() => activateModifyToDo(todo)}>
+                      수정
+                    </button>
+                    <button data-testid="delete-button" onClick={() => deleteToDo(todo)}>
+                      삭제
+                    </button>
+                  </label>
+                )}
+              </li>
+            ))}
+          </ul>
         </>
     )}
 
